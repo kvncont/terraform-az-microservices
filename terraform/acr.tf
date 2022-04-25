@@ -46,7 +46,7 @@ resource "azurerm_private_endpoint" "pe_acr" {
 }
 
 # Azure DevOps Service Connection Config
-resource "azuredevops_serviceendpoint_dockerregistry" "svc_connection_acr" {
+resource "azuredevops_serviceendpoint_dockerregistry" "svc_acr" {
   project_id            = data.azuredevops_project.coders.id
   service_endpoint_name = "${var.prefix_svc_name}_${upper(azurerm_container_registry.acr.name)}"
   docker_registry       = azurerm_container_registry.acr.login_server
