@@ -1,5 +1,5 @@
-resource "azurerm_key_vault" "key_vault_microservices" {
-  name                        = "kv-microservices"
+resource "azurerm_key_vault" "key_vault" {
+  name                        = "kv-${var.suffix_resource_name}"
   location                    = azurerm_resource_group.rg_microservices.location
   resource_group_name         = azurerm_resource_group.rg_microservices.name
   enabled_for_disk_encryption = true
@@ -18,42 +18,89 @@ resource "azurerm_key_vault" "key_vault_microservices" {
     object_id = data.azurerm_client_config.current.object_id
 
     key_permissions = [
+      "Backup",
+      "Create",
+      "Decrypt",
+      "Delete",
+      "Encrypt",
       "Get",
+      "Import",
       "List",
-      "Delete"
+      "Purge",
+      "Recover",
+      "Restore",
+      "Sign",
+      "UnwrapKey",
+      "Update",
+      "Verify",
+      "WrapKey"
     ]
 
     secret_permissions = [
-      "Get",
-      "Set",
-      "List",
+      "Backup",
       "Delete",
-      "Purge"
+      "Get",
+      "List",
+      "Purge",
+      "Recover",
+      "Restore",
+      "Set"
+    ]
+
+    certificate_permissions = [
+      "Backup",
+      "Create",
+      "Delete",
+      "DeleteIssuers",
+      "Get",
+      "GetIssuers",
+      "Import",
+      "List",
+      "ListIssuers",
+      "ManageContacts",
+      "ManageIssuers",
+      "Purge", "Recover",
+      "Restore",
+      "SetIssuers",
+      "Update"
     ]
 
     storage_permissions = [
+      "Backup",
+      "Delete",
+      "DeleteSAS",
       "Get",
-      "Set",
+      "GetSAS",
       "List",
-      "Delete"
+      "ListSAS",
+      "Purge",
+      "Recover",
+      "RegenerateKey",
+      "Restore",
+      "Set",
+      "SetSAS",
+      "Update"
     ]
   }
+
+  tags = var.tags
 }
 
 resource "azurerm_private_dns_zone" "pdnsz_key_vault" {
   name                = "privatelink.vaultcore.azure.net"
   resource_group_name = azurerm_resource_group.rg_microservices.name
+  tags                = var.tags
 }
 
 resource "azurerm_private_endpoint" "pe_key_vault" {
-  name                = "pe-${azurerm_key_vault.key_vault_microservices.name}"
+  name                = "pe-${azurerm_key_vault.key_vault.name}"
   location            = azurerm_resource_group.rg_microservices.location
   resource_group_name = azurerm_resource_group.rg_microservices.name
   subnet_id           = azurerm_subnet.snet_pe.id
 
   private_service_connection {
-    name                           = azurerm_key_vault.key_vault_microservices.name
-    private_connection_resource_id = azurerm_key_vault.key_vault_microservices.id
+    name                           = azurerm_key_vault.key_vault.name
+    private_connection_resource_id = azurerm_key_vault.key_vault.id
     is_manual_connection           = false
     subresource_names              = ["vault"]
   }
@@ -62,4 +109,6 @@ resource "azurerm_private_endpoint" "pe_key_vault" {
     name                 = azurerm_private_dns_zone.pdnsz_key_vault.name
     private_dns_zone_ids = [azurerm_private_dns_zone.pdnsz_key_vault.id]
   }
+
+  tags = var.tags
 }

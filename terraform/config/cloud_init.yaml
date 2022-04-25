@@ -1,0 +1,39 @@
+#cloud-config
+package_update: true
+package_upgrade: true
+packages:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - git
+  - gnupg
+  - lsb-release
+  - maven
+  - npm
+  - openjdk-8-jdk
+  - openjdk-17-jdk
+  - openjdk-11-jdk
+  - python
+  - software-properties-common
+  - zip
+  - wget
+write_files:
+- path: /etc/environment
+  append: true
+  content: |
+    JAVA_HOME_8_X64="/usr/lib/jvm/java-8-openjdk-amd64/bin/java"
+    JAVA_HOME_11_X64="/usr/lib/jvm/java-11-openjdk-amd64/bin/java"
+    JAVA_HOME_17_X64="/usr/lib/jvm/java-17-openjdk-amd64/bin/java"
+runcmd:
+  # Install AzureCLI
+  - curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+  # Install kubectl
+  - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+  - curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+  - echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+  - sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+bootcmd:
+  - mkdir -p /etc/systemd/system/walinuxagent.service.d
+  - echo "[Unit]\nAfter=cloud-final.service" > /etc/systemd/system/walinuxagent.service.d/override.conf
+  - sed "s/After=multi-user.target//g" /lib/systemd/system/cloud-final.service > /etc/systemd/system/cloud-final.service
+  - systemctl daemon-reload
