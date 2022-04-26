@@ -33,9 +33,3 @@ variable "tags" {
     "environment" = "dev"
   }
 }
-
-# VM
-variable "vm_admin_passwd" {
-  type        = string
-  description = "Admin password for vms"
-}

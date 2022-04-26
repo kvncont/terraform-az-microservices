@@ -26,7 +26,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     type            = "VirtualMachineScaleSets"
     os_disk_size_gb = 30
     zones           = ["1", "2", "3"]
-    vnet_subnet_id  = azurerm_subnet.snet_aks.id
+    vnet_subnet_id  = data.azurerm_subnet.snet_aks.id
   }
 
   service_principal {

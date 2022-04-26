@@ -28,7 +28,7 @@ resource "azurerm_private_endpoint" "pe_acr" {
   name                = "pe-${azurerm_container_registry.acr.name}"
   location            = azurerm_resource_group.rg_microservices.location
   resource_group_name = azurerm_resource_group.rg_microservices.name
-  subnet_id           = azurerm_subnet.snet_pe.id
+  subnet_id           = data.azurerm_subnet.snet_pe.id
 
   private_service_connection {
     name                           = azurerm_container_registry.acr.name

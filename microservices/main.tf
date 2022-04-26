@@ -32,6 +32,23 @@ data "azuredevops_project" "iac" {
 # Azure
 data "azurerm_client_config" "current" {}
 
+data "azurerm_virtual_network" "vnet" {
+  name                = "vnet-kvncontmicroservices"
+  resource_group_name = "rg-networking"
+}
+
+data "azurerm_subnet" "snet_pe" {
+  name                 = "snet-pe"
+  resource_group_name  = data.azurerm_virtual_network.vnet.resource_group_name
+  virtual_network_name = data.azurerm_virtual_network.vnet.name
+}
+
+data "azurerm_subnet" "snet_aks" {
+  name                 = "snet-aks"
+  resource_group_name  = data.azurerm_virtual_network.vnet.resource_group_name
+  virtual_network_name = data.azurerm_virtual_network.vnet.name
+}
+
 resource "azurerm_resource_group" "rg_microservices" {
   name     = "rg-${var.suffix_resource_name}"
   location = "eastus2"

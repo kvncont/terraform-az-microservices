@@ -26,5 +26,5 @@ output "azure_devops_svc_k8s" {
 
 output "azure_devops_svc_acr" {
   description = "Service connection name for ACR in Azure Devops"
-  value       = azuredevops_serviceendpoint_dockerregistry.svc_connection_acr.service_endpoint_name
+  value       = azuredevops_serviceendpoint_dockerregistry.svc_acr.service_endpoint_name
 }
